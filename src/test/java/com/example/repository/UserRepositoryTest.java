@@ -19,18 +19,26 @@ import com.example.entity.User;
 public class UserRepositoryTest {
     
     @Autowired
-    private UserRepository UserRepository;
+    private UserRepository userRepository;
     
     @Test
     public void whenFindingUserById_thenCorrect() {
-        UserRepository.save(new User("userone", "passone"));
-        assertThat(UserRepository.findById(1L)).isInstanceOf(Optional.class);
+        userRepository.save(new User("userone", "passone"));
+        assertThat(userRepository.findById(1L)).isInstanceOf(Optional.class);
     }
     
     @Test
     public void whenFindingAllUsers_thenCorrect() {
-        UserRepository.save(new User("userone", "passone"));
-        UserRepository.save(new User("usertwo", "passtwo"));
-        assertThat(UserRepository.findAll()).isInstanceOf(List.class);
+        userRepository.save(new User("userone", "passone"));
+        userRepository.save(new User("usertwo", "passtwo"));
+        assertThat(userRepository.findAll()).isInstanceOf(List.class);
+    }
+    
+    @Test
+    public void whenSavingUser_thenCorrect() {
+        userRepository.save(new User("userthree", "passthree"));
+        User user = userRepository.findById(1L).orElseGet(() 
+          -> new User("userfour", "passfour"));
+        assertThat(user.getUsername()).isEqualTo("userone");
     }
 }
