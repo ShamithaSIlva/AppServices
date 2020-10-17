@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "tasks")
 public class Task
@@ -17,8 +19,10 @@ public class Task
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private long id;
+	
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
+	@JsonIgnore
     private User user;
 
 	private String lastUpdated;
@@ -26,17 +30,20 @@ public class Task
 	private String taskName;
 
 	private String description;
+	
+	private boolean checked;
 
 	public Task()
 	{
 	}
 
-	public Task( String lastUpdated, String taskName,String description,User user )
+	public Task( String lastUpdated, String taskName,String description,User user,boolean checked )
 	{
 		super();
 		this.lastUpdated = lastUpdated;
 		this.taskName = taskName;
 		this.description = description;
+		this.checked = checked;
 		this.user = user;
 	}
 
@@ -78,5 +85,20 @@ public class Task
 	public void setTaskName( String taskName )
 	{
 		this.taskName = taskName;
-	}	
+	}
+
+	public boolean isChecked()
+	{
+		return checked;
+	}
+
+	public void setChecked( boolean checked )
+	{
+		this.checked = checked;
+	}
+
+	public long getId()
+	{
+		return id;
+	}		
 }

@@ -56,4 +56,19 @@ public class User
 	{
 		this.password = password;
 	}
+
+	public Set<Task> getTasks()
+	{
+		return tasks;
+	}
+
+	public void setTasks( Set<Task> tasks )
+	{
+		this.tasks = tasks;
+	}
+
+	public long getId()
+	{
+		return id;
+	}	
 }
