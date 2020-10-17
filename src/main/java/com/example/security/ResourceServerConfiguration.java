@@ -32,11 +32,18 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	private TasksRepository taskRepo;
 
 	@RequestMapping("/tasks/{id}")
-	public Set<Task> listAllTasks(@PathVariable Long id)
+	public ResponseEntity<Set<Task>> listAllTasks(@PathVariable Long id)
 	{
-		User user = userRepository.findById(id)
-			      .orElseThrow(() -> new UserNotFoundException(id));
-		return user.getTasks();
+		User user = userRepository.findById(id).get();
+		if(user!=null)
+		{
+			return new ResponseEntity<Set<Task>>(user.getTasks(), HttpStatus.OK);
+		}
+		else
+		{
+			return new ResponseEntity<Set<Task>>(HttpStatus.NOT_FOUND);
+		}
+		
 	}
 	
 	@RequestMapping(value="/tasks/add", method=RequestMethod.POST)
@@ -51,6 +58,41 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 		else 
 		{
 			return new ResponseEntity<Task>(HttpStatus.NOT_FOUND);
+		}
+		
+	}
+	
+	@RequestMapping(value="/tasks/update", method=RequestMethod.PUT)
+	public ResponseEntity<Task> updateTask(@RequestBody Task task,Principal principal )
+	{
+		Task taskToUpdate = taskRepo.findById(task.getId()).get();
+		if(taskToUpdate != null)
+		{
+			taskToUpdate.setLastUpdated( task.getLastUpdated() );
+			taskToUpdate.setTaskName( task.getTaskName() );
+			taskToUpdate.setDescription( task.getDescription() );
+			taskToUpdate.setChecked( task.isChecked() );
+			return new ResponseEntity<Task>(taskRepo.save( taskToUpdate ), HttpStatus.OK);
+		}
+		else 
+		{
+			return new ResponseEntity<Task>(HttpStatus.NOT_FOUND);
+		}
+		
+	}
+	
+	@RequestMapping(value="/tasks/delete/{id}", method=RequestMethod.DELETE)
+	public ResponseEntity<Void> delete(@PathVariable Long id )
+	{
+		Task taskToDelete = taskRepo.findById(id).get();
+		if(taskToDelete != null)
+		{
+			taskRepo.deleteById( id );
+			return new ResponseEntity<Void>(HttpStatus.OK);
+		}
+		else 
+		{
+			return new ResponseEntity<Void>(HttpStatus.NOT_FOUND);
 		}
 		
 	}
