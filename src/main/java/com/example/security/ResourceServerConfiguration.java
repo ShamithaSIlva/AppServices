@@ -1,6 +1,7 @@
 package com.example.security;
 
 import java.security.Principal;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,9 +66,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	@RequestMapping(value="/tasks/update", method=RequestMethod.PUT)
 	public ResponseEntity<Task> updateTask(@RequestBody Task task,Principal principal )
 	{
-		Task taskToUpdate = taskRepo.findById(task.getId()).get();
-		if(taskToUpdate != null)
+		Optional<Task> option = taskRepo.findById(task.getId());
+		if(option.isPresent())
 		{
+			Task taskToUpdate = option.get();
 			taskToUpdate.setLastUpdated( task.getLastUpdated() );
 			taskToUpdate.setTaskName( task.getTaskName() );
 			taskToUpdate.setDescription( task.getDescription() );
@@ -84,8 +86,8 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	@RequestMapping(value="/tasks/delete/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@PathVariable Long id )
 	{
-		Task taskToDelete = taskRepo.findById(id).get();
-		if(taskToDelete != null)
+		Optional<Task> option = taskRepo.findById(id);
+		if(option.isPresent())
 		{
 			taskRepo.deleteById( id );
 			return new ResponseEntity<Void>(HttpStatus.OK);
