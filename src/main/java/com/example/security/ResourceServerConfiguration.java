@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.entity.Task;
 import com.example.entity.User;
-import com.example.error.UserNotFoundException;
 import com.example.repository.TasksRepository;
 import com.example.repository.UserRepository;
 
@@ -32,10 +31,10 @@ public class ResourceServerConfiguration extends ResourceServerConfigurerAdapter
 	@Autowired
 	private TasksRepository taskRepo;
 
-	@RequestMapping("/tasks/{id}")
-	public ResponseEntity<Set<Task>> listAllTasks(@PathVariable Long id)
+	@RequestMapping("/tasks")
+	public ResponseEntity<Set<Task>> listAllTasks(Principal principal)
 	{
-		User user = userRepository.findById(id).get();
+		User user = userRepository.findByUserName(principal.getName());
 		if(user!=null)
 		{
 			return new ResponseEntity<Set<Task>>(user.getTasks(), HttpStatus.OK);
