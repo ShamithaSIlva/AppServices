@@ -46,9 +46,15 @@ public class DemoApplication extends WebSecurityConfigurerAdapter{
     @Override
     public UserDetailsService userDetailsService() {   
     	com.example.entity.User user1 = userRepository.save( new com.example.entity.User("userone","passone") );
-    	UserDetails user=User.builder().username(user1.getUsername()).password(passwordEncoder().encode(user1.getPassword())).
+    	UserDetails userOne=User.builder().username(user1.getUsername()).password(passwordEncoder().encode(user1.getPassword())).
     			roles("USER").build();
-        return new InMemoryUserDetailsManager(user);
+    	com.example.entity.User user2 = userRepository.save( new com.example.entity.User("usertwo","passtwo") );
+    	UserDetails userTwo=User.builder().username(user2.getUsername()).password(passwordEncoder().encode(user2.getPassword())).
+    			roles("USER").build();
+    	com.example.entity.User user3 = userRepository.save( new com.example.entity.User("userthree","passthree") );
+    	UserDetails userThree=User.builder().username(user3.getUsername()).password(passwordEncoder().encode(user3.getPassword())).
+    			roles("USER").build();
+        return new InMemoryUserDetailsManager(userOne,userTwo,userThree);
     }
     
     @Bean
